@@ -1,0 +1,32 @@
+name: ManualStonks
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main     
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: execute py script
+        run: |
+          python dl.py
+      - name: commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "update data" -a
+          
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main  
