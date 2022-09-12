@@ -66,8 +66,16 @@ def main():
             with open(f"data/{file}", 'r') as data:
                 data_l.append(data.read())
                 
+                
+        format_datatable = {
+            "data" : []
+        }
+        for y in data_l:
+            x = json.loads(y)
+            format_datatable["data"].append([x["name"],x["symbol"],x["latest"],x["days"],x["loss"]])
+            
         with open("all.json", 'w') as all:
-            all.write(json.dumps(data_l))
+            all.write(json.dumps(format_datatable))
         
 if __name__ == "__main__":
     session = requests_cache.CachedSession("yfinance.cache")
