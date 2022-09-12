@@ -1,11 +1,12 @@
 
 from datetime import datetime
-import pandas as pd
-import requests_cache
-import yfinance as yf
 import json 
 from os import listdir
 from os.path import isfile, join
+
+import pandas as pd
+import requests_cache
+import yfinance as yf
 
 
 def get_all_symbols() -> list[str]:
@@ -29,6 +30,8 @@ def calculate_loss(prices: pd.DataFrame) -> float:
 
 def main():
     data_l = []
+
+    
     for file in onlyfiles:
         latest = datetime.strptime(file.split("_")[0], '%Y-%m-%d').date()
         if date_time < latest:
@@ -40,6 +43,10 @@ def main():
     symbols = [x for x in get_all_symbols() if x not in s]
 
     for sym in symbols:
+        format_datatable = {
+            "data" : []
+        }
+        
         data = yf.Tickers(sym)
         full_name = data.tickers[sym].info["longName"]
         hist = pd.DataFrame(data.tickers[sym].history(period="1y"))
@@ -64,18 +71,13 @@ def main():
         jsonfiles = [f for f in listdir("data") if isfile(join("data", f)) and ".json" in f]
         for file in jsonfiles:
             with open(f"data/{file}", 'r') as data:
-                data_l.append(data.read())
+                x = json.loads(data.read())
+                format_datatable["data"].append([x["name"],x["symbol"],x["days"],x["loss"],x["latest"]])
                 
-                
-        format_datatable = {
-            "data" : []
-        }
-        for y in data_l:
-            x = json.loads(y)
-            format_datatable["data"].append([x["name"],x["symbol"],x["latest"],x["days"],x["loss"]])
-            
         with open("all.json", 'w') as all:
             all.write(json.dumps(format_datatable))
+        
+        format_datatable["data"] = []
         
 if __name__ == "__main__":
     session = requests_cache.CachedSession("yfinance.cache")
