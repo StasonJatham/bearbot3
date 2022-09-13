@@ -1,6 +1,7 @@
 # -> standard
 import json
-from os import listdir
+import glob
+from os import listdir, remove
 from datetime import datetime
 from os.path import isfile, join
 from typing import Any
@@ -35,7 +36,6 @@ def main():
     for f in stock_jsons:
         current_symbol: str = f.split("_")[1].split(".json")[0]
         last_update = datetime.strptime(f.split("_")[0], '%Y-%m-%d').date()
-
         if today < last_update:
             old_symbols.append(current_symbol)
 
@@ -43,7 +43,14 @@ def main():
     symbols = [x for x in get_all_symbols() if x not in s]
 
     for sym in symbols:
-        print(f"+++ Adding {sym}")
+        latest = datetime.today().strftime('%Y-%m-%d')
+
+        for f in glob.glob(f"data/*_{sym}.json"):
+            if latest not in f:
+                print(f"-- Removing old: {f}")
+                remove(f)
+
+        print(f"++ Adding {sym}")
         format_datatable: dict[str, list[list[str | int | float]]] = {
             "data": []
         }
@@ -52,7 +59,6 @@ def main():
         full_name: str = data.tickers[sym].info["longName"]
         hist = pd.DataFrame(data.tickers[sym].history(period="1y"))
         hist.index = pd.to_datetime(hist.index)
-        latest = datetime.today().strftime('%Y-%m-%d')
 
         days, loss = calculate_loss(hist)
 
