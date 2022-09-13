@@ -8,6 +8,8 @@ pip install -r requirements.txt
 python3 dl.py
 ```
 This will then pull prices for Symbols in `symbols.lst`, calculate the biggest consecutive loss over the last 365 days and the save it to `data/YYYY-MM-DD_SYMBOL.json`. The JSON Files are more like of a "state" keeping mechanism (because this was originally running in AWS Batch with Spot EC2), where the can terminate your instance. The way I built it, it should be fault tolerant for these kind of interruptions, on restart it would just keep going.
+### Adding & Removing Symbols
+If you want to add or remove symbols you just edit the `symbols.lst`.
 
 ## Infrastructure 
 Before I refactored Bearbot, it was running on a t4g.small in ca-central-1 (0,0184 USD/hour,2vCPU, 2 GiB RAM) and built with Django an SQLite. That`s about $14 a month. I chose their Gravitron instances, because I love their performance and evironmental impact, that is also why I host my compute in Canada 🇨🇦,
