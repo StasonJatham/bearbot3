@@ -1,5 +1,7 @@
 # Bearbot 3.0 - Finding Dips and making Tendies
 
+<img src="static/bearbot_big_hero.png" alt="Bearbot Logo" width="200"/>
+
 ## Installation
 Pretty straight forward to get started.
 ```python3
