@@ -1,9 +1,10 @@
-
-from datetime import datetime
+# -> standard
 import json
 from os import listdir
+from datetime import datetime
 from os.path import isfile, join
-
+from typing import Any
+# -> third party
 import pandas as pd
 import requests_cache
 import yfinance as yf
@@ -14,49 +15,46 @@ def get_all_symbols() -> list[str]:
         return symbols.read().split()
 
 
-def calculate_loss(prices: pd.DataFrame) -> float:
+def calculate_loss(prices: pd.DataFrame) -> tuple[int, float]:
     last_price: float = prices["Close"][-1]
     last_date = prices.index[-1]
-    highest_loss = (9999999999999999, 0)
+    highest_loss: tuple[float, Any] = (9999999999999999, 0)
 
     for date_c, row in prices[::-1].iterrows():
-
         if (last_price / row["Close"] - 1) < highest_loss[0]:
             highest_loss = ((last_price / row["Close"] - 1), date_c)
 
     delta: int = highest_loss[1] - last_date
 
-    return abs(delta.days), highest_loss[0] * 100
+    return (abs(delta.days), highest_loss[0] * 100)
 
 
 def main():
-    data_l = []
 
-    for file in onlyfiles:
-        latest = datetime.strptime(file.split("_")[0], '%Y-%m-%d').date()
-        if date_time < latest:
-            symbols.append(file.split("_")[1].split(".json")[0])
-        else:
-            old_symbols.append(file.split("_")[1].split(".json")[0])
+    # -> Symbols to update
+    for f in stock_jsons:
+        current_symbol: str = f.split("_")[1].split(".json")[0]
+        last_update = datetime.strptime(f.split("_")[0], '%Y-%m-%d').date()
+
+        if today < last_update:
+            old_symbols.append(current_symbol)
 
     s = set(old_symbols)
     symbols = [x for x in get_all_symbols() if x not in s]
 
     for sym in symbols:
         print(f"+++ Adding {sym}")
-        format_datatable = {
+        format_datatable: dict[str, list[list[str | int | float]]] = {
             "data": []
         }
 
         data = yf.Tickers(sym)
-        full_name = data.tickers[sym].info["longName"]
+        full_name: str = data.tickers[sym].info["longName"]
         hist = pd.DataFrame(data.tickers[sym].history(period="1y"))
         hist.index = pd.to_datetime(hist.index)
         latest = datetime.today().strftime('%Y-%m-%d')
 
-        days_loss = calculate_loss(hist)
-        days = days_loss[0]
-        loss = days_loss[1]
+        days, loss = calculate_loss(hist)
 
         stonk: dict[str, str | float] = {
             "name": full_name,
@@ -89,10 +87,9 @@ if __name__ == "__main__":
         "User-agent"
     ] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:98.0) Gecko/20100101 Firefox/98.0"
     old_symbols: list[str] = []
-    losslist = []
 
-    date_time = datetime.now().date()
-    onlyfiles = [f for f in listdir("data") if isfile(
+    today = datetime.now().date()
+    stock_jsons = [f for f in listdir("data") if isfile(
         join("data", f)) and ".json" in f]
 
     main()
