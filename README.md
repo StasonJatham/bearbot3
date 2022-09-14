@@ -1,3 +1,5 @@
+[![pages-build-deployment](https://github.com/StasonJatham/bearbot3/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/StasonJatham/bearbot3/actions/workflows/pages/pages-build-deployment) [![ManualStonks](https://github.com/StasonJatham/bearbot3/actions/workflows/manup.yml/badge.svg)](https://github.com/StasonJatham/bearbot3/actions/workflows/manup.yml) [![Stonks](https://github.com/StasonJatham/bearbot3/actions/workflows/update.yml/badge.svg)](https://github.com/StasonJatham/bearbot3/actions/workflows/update.yml)
+
 # Bearbot 3.0 - Finding Dips and making Tendies
 
 <img src="static/bearbot_big_hero.png" alt="Bearbot Logo" width="200"/>
