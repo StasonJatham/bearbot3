@@ -59,6 +59,7 @@ def main():
         full_name: str = data.tickers[sym].info["longName"]
         hist = pd.DataFrame(data.tickers[sym].history(period="1y"))
         hist.index = pd.to_datetime(hist.index)
+        hist = hist[-200:]
 
         days, loss = calculate_loss(hist)
 
